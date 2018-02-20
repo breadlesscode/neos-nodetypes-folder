@@ -4,7 +4,8 @@
   properties:
     hideSegmentInUriPath:
       type: boolean
+      defaultValue: true
       ui:
         label: 'i18n'
         inspector:
-          group: 'redirect'
+          group: 'visibility'
