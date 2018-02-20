@@ -80,8 +80,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
                     array_unshift($relativeNodePathSegments, $node->getName());
                     return $foundNode;
                 }
-            }
-            if ($node->getProperty('uriPathSegment') === $pathSegment) {
+            } elseif ($node->getProperty('uriPathSegment') === $pathSegment) {
                 $relativeNodePathSegments[] = $node->getName();
                 return $node;
             }
@@ -115,7 +114,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
                 );
             }
 
-            if ($startingNode === $node || $this->shouldHideNodeUriSegement($node)) {
+            if ($startingNode === $node || !$this->shouldHideNodeUriSegement($node)) {
                 $pathSegment = $node->getProperty('uriPathSegment');
                 $requestPathSegments[] = $pathSegment;
             }
@@ -135,7 +134,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
     protected function shouldHideNodeUriSegement(NodeInterface $node)
     {
         return
-            !$node->hasProperty(self::MIXIN_PROPERTY_NAME) ||
-            !$node->getProperty(self::MIXIN_PROPERTY_NAME) === true;
+            $node->hasProperty(self::MIXIN_PROPERTY_NAME) &&
+            $node->getProperty(self::MIXIN_PROPERTY_NAME) === true;
     }
 }
