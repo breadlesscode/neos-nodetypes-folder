@@ -2,6 +2,7 @@
     "description": "Folder nodetype for Neos CMS",
     "type": "neos-plugin",
     "name": "breadlesscode/neos-nodetypes-folder",
+    "license": "MIT",
     "require": {
         "neos/flow": "*",
         "neos/neos": "^3.0.0"
