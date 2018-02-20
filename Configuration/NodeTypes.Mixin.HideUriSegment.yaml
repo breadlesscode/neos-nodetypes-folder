@@ -1,0 +1,10 @@
+'Breadlesscode.NodeTypes.Folder:Mixin.HideUriSegment':
+  abstract: true
+
+  properties:
+    hideSegmentInUriPath:
+      type: boolean
+      ui:
+        label: 'i18n'
+        inspector:
+          group: 'redirect'

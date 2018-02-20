@@ -1,0 +1,5 @@
+prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusion:Tag) {
+    tagName = 'p'
+    content = ${ Translation.translate('Breadlesscode.NodeTypes.Folder:NodeTypes.Document.Folder:ui.label') }
+    content.@process.appendFolderName = ${ '<b>' + value + ':</b> ' + q(node).property('title') }
+}

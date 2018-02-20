@@ -1,0 +1,18 @@
+{
+    "description": "Folder nodetype for Neos CMS",
+    "type": "neos-plugin",
+    "name": "breadlesscode/neos-nodetypes-folder",
+    "require": {
+        "neos/flow": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Breadlesscode\\NodeTypes\\Folder\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Breadlesscode.NodeTypes.Folder"
+        }
+    }
+}

@@ -1,0 +1,10 @@
+Neos:
+  Neos:
+    userInterface:
+      translation:
+        autoInclude:
+          'Breadlesscode.NodeTypes.Folder':
+            - 'NodeTypes/Document/*'
+    fusion:
+      autoInclude:
+        Breadlesscode.NodeTypes.Folder: true
