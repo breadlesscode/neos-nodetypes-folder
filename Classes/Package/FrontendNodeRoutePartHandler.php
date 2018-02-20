@@ -80,7 +80,8 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
                     array_unshift($relativeNodePathSegments, $node->getName());
                     return $foundNode;
                 }
-            } elseif ($node->getProperty('uriPathSegment') === $pathSegment) {
+            }
+            if ($node->getProperty('uriPathSegment') === $pathSegment) {
                 $relativeNodePathSegments[] = $node->getName();
                 return $node;
             }
