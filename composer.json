@@ -3,7 +3,8 @@
     "type": "neos-plugin",
     "name": "breadlesscode/neos-nodetypes-folder",
     "require": {
-        "neos/flow": "*"
+        "neos/flow": "*",
+        "neos/neos": "^3.0.0"
     },
     "autoload": {
         "psr-4": {
