@@ -2,9 +2,9 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product-name="Breadlesscode.NodeTypes.Folder" source-language="en" target-language="de" datatype="plaintext">
         <body>
-            <trans-unit id="ui.label" xml:space="preserve">
-                <source>Folder</source>
-                <target xml:lang="de">Ordner</target>
+            <trans-unit id="properties.hideSegmentInUriPath" xml:space="preserve">
+                <source>Hide segment in uri path?</source>
+                <target xml:lang="de">URI Pfad in der URL verbergen?</target>
             </trans-unit>
         </body>
     </file>
