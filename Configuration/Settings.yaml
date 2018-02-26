@@ -4,7 +4,7 @@ Neos:
       translation:
         autoInclude:
           'Breadlesscode.NodeTypes.Folder':
-            - 'NodeTypes/Document/*'
+            - 'NodeTypes/*/*'
     fusion:
       autoInclude:
         Breadlesscode.NodeTypes.Folder: true
