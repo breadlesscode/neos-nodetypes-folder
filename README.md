@@ -7,6 +7,12 @@
 
 This Neos Plugin contains a folder nodetype. This Folder **isnt rendered in the Uri** by default.
 
+The main idea & code is from [@sebbo](https://gist.github.com/Sebobo) from [this Gist](https://gist.github.com/Sebobo/7b12f8e46778321f7b1b02d4b9aaad85). Thanks for that!!!
+
+## Warning
+
+This package overrides the FrontendNodeRoutePartHandler!
+
 ## Installation
 Most of the time you have to make small adjustments to a package (e.g., the configuration in Settings.yaml). Because of that, it is important to add the corresponding package to the composer from your theme package. Mostly this is the site package located under Packages/Sites/. To install it correctly go to your theme package (e.g.Packages/Sites/Foo.Bar) and run following command:
 
