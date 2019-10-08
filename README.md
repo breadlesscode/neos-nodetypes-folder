@@ -7,7 +7,7 @@
 
 This Neos Plugin contains a folder nodetype. This Folder **isnt rendered in the Uri** by default.
 
-The main idea & code is from [@sebbo](https://gist.github.com/Sebobo) from [this Gist](https://gist.github.com/Sebobo/7b12f8e46778321f7b1b02d4b9aaad85). Thanks for that!!!
+The main idea & code is from [@sebobo](https://gist.github.com/Sebobo) from [this Gist](https://gist.github.com/Sebobo/7b12f8e46778321f7b1b02d4b9aaad85). Thanks for that!!!
 
 ## Warning
 
