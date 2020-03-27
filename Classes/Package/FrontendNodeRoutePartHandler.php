@@ -1,11 +1,14 @@
 <?php
+declare(strict_types=1);
+
 namespace Breadlesscode\NodeTypes\Folder\Package;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Exception\NodeException;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Neos\Routing\Exception;
-use \Neos\Neos\Routing\FrontendNodeRoutePartHandler as NeosFrontendNodeRoutePartHandler;
+use Neos\Neos\Routing\FrontendNodeRoutePartHandler as NeosFrontendNodeRoutePartHandler;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -13,14 +16,14 @@ use \Neos\Neos\Routing\FrontendNodeRoutePartHandler as NeosFrontendNodeRoutePart
 class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
 {
     /**
-     * folder mixin type for hiding uri segement
+     * Folder mixin property for hiding uri segment
      */
-    const MIXIN_PROPERTY_NAME = 'hideSegmentInUriPath';
+    public const MIXIN_PROPERTY_NAME = 'hideSegmentInUriPath';
     /**
      * @param string $requestPath
      * @return string
      */
-    protected function getWorkspaceName($requestPath)
+    protected function getWorkspaceName($requestPath): string
     {
         $contextPathParts = [];
         if ($requestPath !== '' && strpos($requestPath, '@') !== false) {
@@ -33,8 +36,10 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
 
         return $contextPathParts['WorkspaceName'];
     }
+
     /**
      * @inheritdoc
+     * @throws NodeException
      */
     protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, $relativeRequestPath)
     {
@@ -55,21 +60,23 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
         }
         return implode('/', $relativeNodePathSegments);
     }
+
     /**
      * @param NodeInterface $startingNode
      * @param string $pathSegment
      * @param array $relativeNodePathSegments
      * @param string $workspaceName
-     * @return NodeInterface
+     * @return NodeInterface|null
+     * @throws NodeException
      */
-    protected function findNextNodeWithPathSegmentRecursively(
+    protected function  findNextNodeWithPathSegmentRecursively(
         NodeInterface $startingNode,
         $pathSegment,
         &$relativeNodePathSegments,
         $workspaceName
-    ) {
+    ): ?NodeInterface {
         foreach ($startingNode->getChildNodes('Neos.Neos:Document') as $node) {
-            if ($workspaceName == 'live' && $this->shouldHideNodeUriSegement($node)) {
+            if ($workspaceName === 'live' && $this->shouldHideNodeUriSegment($node)) {
                 $foundNode = $this->findNextNodeWithPathSegmentRecursively(
                     $node,
                     $pathSegment,
@@ -88,10 +95,12 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
         }
         return null;
     }
+
     /**
      * @inheritdoc
+     * @throws NodeException
      */
-    protected function getRequestPathByNode(NodeInterface $node)
+    protected function getRequestPathByNode(NodeInterface $node): string
     {
         if ($node->getParentPath() === SiteService::SITES_ROOT_PATH) {
             return '';
@@ -103,36 +112,46 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
             return parent::getRequestPathByNode($node);
         }
 
+        // To allow building of paths to non-hidden nodes beneath hidden nodes, we assume
+        // the input node is allowed to be seen and we must generate the full path here.
+        // To disallow showing a node actually hidden itself has to be ensured in matching
+        // a request path, not in building one.
+        $contextProperties = $node->getContext()->getProperties();
+        $contextAllowingHiddenNodes = $this->contextFactory->create(array_merge($contextProperties, ['invisibleContentShown' => true]));
+        $currentNode = $contextAllowingHiddenNodes->getNodeByIdentifier($node->getIdentifier());
+
         $requestPathSegments = [];
-        while ($node->getParentPath() !== SiteService::SITES_ROOT_PATH && $node instanceof NodeInterface) {
-            if (!$node->hasProperty('uriPathSegment')) {
+        while ($currentNode->getParentPath() !== SiteService::SITES_ROOT_PATH && $currentNode instanceof NodeInterface) {
+            if (!$currentNode->hasProperty('uriPathSegment')) {
                 throw new Exception\MissingNodePropertyException(
                     sprintf(
                         'Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
-                        $node->getPath()
+                        $currentNode->getPath()
                     ),
                     1415020326
                 );
             }
 
-            if ($startingNode === $node || !$this->shouldHideNodeUriSegement($node)) {
-                $pathSegment = $node->getProperty('uriPathSegment');
+            if ($startingNode === $currentNode || !$this->shouldHideNodeUriSegment($currentNode)) {
+                $pathSegment = $currentNode->getProperty('uriPathSegment');
                 $requestPathSegments[] = $pathSegment;
             }
-            $node = $node->getParent();
-            if ($node === null || !$node->isVisible()) {
+            $currentNode = $currentNode->getParent();
+            if ($currentNode === null || !$currentNode->isVisible()) {
                 return '';
             }
         }
         return implode('/', array_reverse($requestPathSegments));
     }
+
     /**
-     * check for hiding uri segement of node
+     * Check for hiding uri segment of node
      *
      * @param NodeInterface $node
      * @return boolean
+     * @throws NodeException
      */
-    protected function shouldHideNodeUriSegement(NodeInterface $node)
+    protected function shouldHideNodeUriSegment(NodeInterface $node): bool
     {
         return
             $node->hasProperty(self::MIXIN_PROPERTY_NAME) &&
