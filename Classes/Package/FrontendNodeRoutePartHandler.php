@@ -20,6 +20,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
      */
     public const MIXIN_PROPERTY_NAME = 'hideSegmentInUriPath';
 
+
     /**
      * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions", package="Neos.Neos")
      * @var boolean
