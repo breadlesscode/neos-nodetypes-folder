@@ -5,4 +5,7 @@
   ui:
     label: 'i18n'
     icon: 'folder'
+  properties:
+    _hiddenInIndex:
+      defaultValue: true
 

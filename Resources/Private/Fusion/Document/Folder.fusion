@@ -1,5 +1,21 @@
-prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusion:Tag) {
-    tagName = 'p'
-    content = ${ Translation.translate('Breadlesscode.NodeTypes.Folder:NodeTypes.Document.Folder:ui.label') }
-    content.@process.appendFolderName = ${ '<b>' + value + ':</b> ' + q(node).property('title') }
+prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusion:Case) {
+    backend {
+        condition = ${documentNode.context.inBackend}
+        renderer = Neos.Neos:Page {
+            body = Neos.Fusion:Tag {
+                tagName = 'p'
+                content = ${ Translation.translate('Breadlesscode.NodeTypes.Folder:NodeTypes.Document.Folder:ui.label') }
+                content.@process.appendFolderName = ${ '<b>' + value + ':</b> ' + q(node).property('title') }
+            }
+        }
+    }
+
+    default {
+        condition = true
+        renderer = Neos.Neos:Page {
+            body = Neos.Neos:Shortcut {
+                targetMode = 'parentNode'
+            }
+        }
+    }
 }
