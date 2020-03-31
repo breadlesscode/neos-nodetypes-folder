@@ -21,7 +21,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
      * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions", package="Neos.Neos")
      * @var boolean
      */
-    protected bool $supportEmptySegmentForDimensions;
+    protected $supportEmptySegmentForDimensions;
 
     /**
      * @param string $requestPath
