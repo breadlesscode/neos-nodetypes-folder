@@ -85,6 +85,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
     ): ?NodeInterface {
         foreach ($startingNode->getChildNodes('Neos.Neos:Document') as $node) {
             if ($workspaceName === 'live' && $this->shouldHideNodeUriSegment($node)) {
+                $currentIndex = count($relativeNodePathSegments);
                 $foundNode = $this->findNextNodeWithPathSegmentRecursively(
                     $node,
                     $pathSegment,
@@ -92,7 +93,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
                     $workspaceName
                 );
                 if ($foundNode !== null) {
-                    array_unshift($relativeNodePathSegments, $node->getName());
+                    array_splice($relativeNodePathSegments, $currentIndex, 0, $node->getName());
                     return $foundNode;
                 }
             }
