@@ -20,13 +20,6 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
      */
     public const MIXIN_PROPERTY_NAME = 'hideSegmentInUriPath';
 
-
-    /**
-     * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions", package="Neos.Neos")
-     * @var boolean
-     */
-    protected bool $supportEmptySegmentForDimensions;
-
     /**
      * @param string $requestPath
      * @return string
@@ -77,7 +70,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
      * @return NodeInterface|null
      * @throws NodeException
      */
-    protected function  findNextNodeWithPathSegmentRecursively(
+    protected function findNextNodeWithPathSegmentRecursively(
         NodeInterface $startingNode,
         $pathSegment,
         &$relativeNodePathSegments,
@@ -126,7 +119,12 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
         // To disallow showing a node actually hidden itself has to be ensured in matching
         // a request path, not in building one.
         $contextProperties = $node->getContext()->getProperties();
-        $contextAllowingHiddenNodes = $this->contextFactory->create(array_merge($contextProperties, ['invisibleContentShown' => true]));
+        $contextAllowingHiddenNodes = $this->contextFactory->create(
+            array_merge(
+                $contextProperties,
+                ['invisibleContentShown' => true]
+            )
+        );
         $currentNode = $contextAllowingHiddenNodes->getNodeByIdentifier($node->getIdentifier());
 
         $requestPathSegments = [];
