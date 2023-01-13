@@ -2,10 +2,31 @@ prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusio
     backend {
         condition = ${documentNode.context.inBackend}
         renderer = Neos.Neos:Page {
-            body = Neos.Fusion:Tag {
-                tagName = 'p'
-                content = ${ Translation.translate('Breadlesscode.NodeTypes.Folder:NodeTypes.Document.Folder:ui.label') }
-                content.@process.appendFolderName = ${ '<b>' + value + ':</b> ' + q(node).property('title') }
+            head {
+                neosCSS = Neos.Fusion:Tag {
+                    @position = 'after stylesheets'
+                    tagName = 'link'
+                    attributes {
+                        rel = 'stylesheet'
+                        href = Neos.Fusion:ResourceUri {
+                            path = 'resource://Neos.Neos/Public/Styles/Neos.css'
+                        }
+                    }
+                }
+                folderCSS = Neos.Fusion:Tag {
+                    @position = 'after neosCSS'
+                    tagName = 'link'
+                    attributes {
+                        rel = 'stylesheet'
+                        href = Neos.Fusion:ResourceUri {
+                            path = 'resource://Breadlesscode.NodeTypes.Folder/Public/Styles/Folder.css'
+                        }
+                    }
+                }
+            }
+            body {
+                templatePath = 'resource://Breadlesscode.NodeTypes.Folder/Private/Templates/Folder.html'
+                title = ${q(node).property('title')}
             }
         }
     }
