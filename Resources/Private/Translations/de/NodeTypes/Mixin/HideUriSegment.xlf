@@ -3,8 +3,8 @@
     <file original="" product-name="Breadlesscode.NodeTypes.Folder" source-language="en" target-language="de" datatype="plaintext">
         <body>
             <trans-unit id="properties.hideSegmentInUriPath" xml:space="preserve">
-                <source>Hide segment in uri path?</source>
-                <target xml:lang="de">URI Pfad in der URL verbergen?</target>
+                <source>Hide URL path segment</source>
+                <target xml:lang="de">URL-Pfadsegment verbergen</target>
             </trans-unit>
         </body>
     </file>
