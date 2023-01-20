@@ -9,3 +9,4 @@
         label: 'i18n'
         inspector:
           group: 'visibility'
+          position: 50
