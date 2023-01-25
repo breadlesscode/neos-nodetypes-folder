@@ -18,7 +18,7 @@ class PackageManagerHelper implements ProtectedContextAwareInterface
     /**
      * @return string
      */
-    public function getNeosUiMajorVersion()
+    public function getNeosUiMajorVersion(): string
     {
         return preg_replace('#^v?(\d+)\.(\d+)\.(\d+)$#', '$1', $this->getNeosUiVersion());
     }
@@ -26,7 +26,7 @@ class PackageManagerHelper implements ProtectedContextAwareInterface
     /**
      * @return string
      */
-    public function getNeosUiMinorVersion()
+    public function getNeosUiMinorVersion(): string
     {
         return preg_replace('#^v?(\d+)\.(\d+)\.(\d+)$#', '$1.$2', $this->getNeosUiVersion());
     }
@@ -34,7 +34,7 @@ class PackageManagerHelper implements ProtectedContextAwareInterface
     /**
      * @return string
      */
-    public function getNeosUiVersion()
+    public function getNeosUiVersion(): string
     {
         try {
             $packageManager = $this->objectManager->get(PackageManager::class);
@@ -51,7 +51,7 @@ class PackageManagerHelper implements ProtectedContextAwareInterface
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }
