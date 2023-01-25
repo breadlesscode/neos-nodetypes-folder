@@ -34,9 +34,14 @@ prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusio
 
     default {
         condition = true
-        renderer = Neos.Neos:Page {
-            body = Neos.Neos:Shortcut {
-                targetMode = 'parentNode'
+        renderer = Neos.Fusion:Http.Message {
+            httpResponseHead {
+                statusCode = 301
+                headers {
+                    Location = Neos.Neos:NodeUri {
+                        node = ${q(documentNode).parent()}
+                    }
+                }
             }
         }
     }
