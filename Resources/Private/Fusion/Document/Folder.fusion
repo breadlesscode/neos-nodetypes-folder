@@ -26,7 +26,7 @@ prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusio
             }
             body {
                 templatePath = 'resource://Breadlesscode.NodeTypes.Folder/Private/Templates/Folder.html'
-                title = ${q(node).property('title')}
+                title = ${q(documentNode).property('title')}
                 version = ${Breadlesscode.NodeTypes.Folder.PackageManager.getNeosUiMajorVersion()}
             }
         }
@@ -39,7 +39,7 @@ prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusio
                 statusCode = 301
                 headers {
                     Location = Neos.Neos:NodeUri {
-                        node = ${q(documentNode).parent()}
+                        node = ${q(documentNode).parent().get(0)}
                     }
                 }
             }
