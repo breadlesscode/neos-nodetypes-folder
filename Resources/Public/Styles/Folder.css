@@ -6,14 +6,17 @@
     height: 100%;
     background-color: #222222;
     z-index: 9999;
-    /*
-    The Neos 7 backend normally uses the "Noto Sans" font,
-    which is no longer available as of 14 January 2023 in
-    the Neos.Neos package due to an incorrect file path in
-    Neos.css.
-    */
-    font-family: sans-serif;
+    font-family: "Noto Sans", sans-serif;
     -webkit-font-smoothing: antialiased;
+}
+
+/*
+The Neos backend normally uses the "Noto Sans" font,
+which is not available in Neos 5 due to an incorrect
+file path in Neos.css.
+*/
+#breadlesscode-node-types-folder.btnf-neos-version-5 {
+    font-family: sans-serif;
 }
 
 #breadlesscode-node-types-folder > div.bntf-inner {
