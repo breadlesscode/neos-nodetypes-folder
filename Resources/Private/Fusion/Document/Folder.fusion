@@ -35,7 +35,7 @@ prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusio
         condition = true
         renderer = Neos.Fusion:Http.Message {
             httpResponseHead {
-                statusCode = 301
+                statusCode = 303
                 headers {
                     Location = Neos.Neos:NodeUri {
                         node = ${q(documentNode).parent().get(0)}
