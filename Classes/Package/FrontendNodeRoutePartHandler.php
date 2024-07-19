@@ -139,7 +139,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
                 );
             }
 
-            if ($startingNode === $currentNode || !$this->shouldHideNodeUriSegment($currentNode)) {
+            if ($startingNode->getPath() === $currentNode->getPath() || !$this->shouldHideNodeUriSegment($currentNode)) {
                 $pathSegment = $currentNode->getProperty('uriPathSegment');
                 $requestPathSegments[] = $pathSegment;
             }
