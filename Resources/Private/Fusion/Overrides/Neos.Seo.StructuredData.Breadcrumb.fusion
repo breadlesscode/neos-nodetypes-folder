@@ -1,0 +1,4 @@
+prototype(Neos.Seo:StructuredData.Breadcrumb){
+    // Dont show Folders in StructuredData Breadcrumb
+    items.@process.filterFolders = ${q(value).filter("[!instanceof Breadlesscode.NodeTypes.Folder:Document.Folder]").filter("[hideSegmentInUriPath!=true]").get()}
+}
