@@ -3,9 +3,8 @@
     'Neos.Neos:Document': true
     'Breadlesscode.NodeTypes.Folder:Mixin.HideUriSegment': true
   ui:
-    label: 'i18n'
-    icon: 'folder'
+    label: i18n
+    icon: folder
   properties:
     _hiddenInIndex:
       defaultValue: true
-

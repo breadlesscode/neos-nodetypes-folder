@@ -3,7 +3,7 @@ Neos:
     userInterface:
       translation:
         autoInclude:
-          'Breadlesscode.NodeTypes.Folder':
+          Breadlesscode.NodeTypes.Folder:
             - 'NodeTypes/*/*'
     fusion:
       autoInclude:

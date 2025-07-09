@@ -19,6 +19,8 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
      * Folder mixin property for hiding uri segment
      */
     public const MIXIN_PROPERTY_NAME = 'hideSegmentInUriPath';
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @param string $requestPath
@@ -28,7 +30,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
     {
         $contextPathParts = [];
         if ($requestPath !== '' && strpos($requestPath, '@') !== false) {
-            preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $requestPath, $contextPathParts);
+            preg_match(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::MATCH_PATTERN_CONTEXTPATH, $requestPath, $contextPathParts);
         }
 
         if (!isset($contextPathParts['WorkspaceName']) || empty($contextPathParts['WorkspaceName'])) {
@@ -42,7 +44,7 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
      * @inheritdoc
      * @throws NodeException
      */
-    protected function getRelativeNodePathByUriPathSegmentProperties(NodeInterface $siteNode, $relativeRequestPath)
+    protected function getRelativeNodePathByUriPathSegmentProperties(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $siteNode, $relativeRequestPath)
     {
         $node = $siteNode;
         $relativeNodePathSegments = [];
@@ -63,20 +65,23 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
     }
 
     /**
-     * @param NodeInterface $startingNode
+     * @param \Neos\ContentRepository\Core\Projection\ContentGraph\Node $startingNode
      * @param string $pathSegment
      * @param array $relativeNodePathSegments
      * @param string $workspaceName
-     * @return NodeInterface|null
+     * @return \Neos\ContentRepository\Core\Projection\ContentGraph\Node|null
      * @throws NodeException
      */
     protected function findNextNodeWithPathSegmentRecursively(
-        NodeInterface $startingNode,
+        \Neos\ContentRepository\Core\Projection\ContentGraph\Node $startingNode,
         $pathSegment,
         &$relativeNodePathSegments,
         $workspaceName
-    ): ?NodeInterface {
-        foreach ($startingNode->getChildNodes('Neos.Neos:Document') as $node) {
+    ): ?\Neos\ContentRepository\Core\Projection\ContentGraph\Node {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($startingNode);
+        // TODO 9.0 migration: Try to remove the iterator_to_array($nodes) call.
+
+        foreach (iterator_to_array($subgraph->findChildNodes($startingNode->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::create(nodeTypeConstraints: 'Neos.Neos:Document'))) as $node) {
             if ($workspaceName === 'live' && $this->shouldHideNodeUriSegment($node)) {
                 $currentIndex = count($relativeNodePathSegments);
                 $foundNode = $this->findNextNodeWithPathSegmentRecursively(
@@ -102,13 +107,13 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
      * @inheritdoc
      * @throws NodeException
      */
-    protected function getRequestPathByNode(NodeInterface $node): string
+    protected function getRequestPathByNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node): string
     {
         if ($node->getParentPath() === SiteService::SITES_ROOT_PATH) {
             return '';
         }
         $startingNode = $node;
-        $workspaceName = $node->getContext()->getWorkspaceName();
+        $workspaceName = $node->workspaceName;
 
         if ($workspaceName !== 'live') {
             return parent::getRequestPathByNode($node);
@@ -125,25 +130,38 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
                 ['invisibleContentShown' => true]
             )
         );
-        $currentNode = $contextAllowingHiddenNodes->getNodeByIdentifier($node->getIdentifier());
+        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
+
+        $currentNode = $contextAllowingHiddenNodes->getNodeByIdentifier($node->aggregateId->value);
 
         $requestPathSegments = [];
-        while ($currentNode->getParentPath() !== SiteService::SITES_ROOT_PATH && $currentNode instanceof NodeInterface) {
+        while ($currentNode->getParentPath() !== SiteService::SITES_ROOT_PATH && $currentNode instanceof \Neos\ContentRepository\Core\Projection\ContentGraph\Node) {
             if (!$currentNode->hasProperty('uriPathSegment')) {
+                $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
+                // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
+
                 throw new Exception\MissingNodePropertyException(
                     sprintf(
                         'Missing "uriPathSegment" property for node "%s". Nodes can be migrated with the "flow node:repair" command.',
-                        $currentNode->getPath()
+                        (string) $subgraph->findNodePath($currentNode->aggregateId)
                     ),
                     1415020326
                 );
             }
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($startingNode);
+            // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
 
-            if ($startingNode->getPath() === $currentNode->getPath() || !$this->shouldHideNodeUriSegment($currentNode)) {
+            // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
+            // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
+
+
+            if ((string) $subgraph->findNodePath($startingNode->aggregateId) === (string) $subgraph->findNodePath($currentNode->aggregateId) || !$this->shouldHideNodeUriSegment($currentNode)) {
                 $pathSegment = $currentNode->getProperty('uriPathSegment');
                 $requestPathSegments[] = $pathSegment;
             }
-            $currentNode = $currentNode->getParent();
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
+            $currentNode = $subgraph->findParentNode($currentNode->aggregateId);
             if ($currentNode === null || !$currentNode->isVisible()) {
                 return '';
             }
@@ -154,11 +172,11 @@ class FrontendNodeRoutePartHandler extends NeosFrontendNodeRoutePartHandler
     /**
      * Check for hiding uri segment of node
      *
-     * @param NodeInterface $node
+     * @param \Neos\ContentRepository\Core\Projection\ContentGraph\Node $node
      * @return boolean
      * @throws NodeException
      */
-    protected function shouldHideNodeUriSegment(NodeInterface $node): bool
+    protected function shouldHideNodeUriSegment(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node): bool
     {
         return
             $node->hasProperty(self::MIXIN_PROPERTY_NAME) &&

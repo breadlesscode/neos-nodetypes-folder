@@ -1,6 +1,6 @@
 prototype(Breadlesscode.NodeTypes.Folder:Document.Folder) < prototype(Neos.Fusion:Case) {
     backend {
-        condition = ${documentNode.context.inBackend}
+        condition = ${renderingMode.isEdit}
         renderer = Neos.Neos:Page {
             head {
                 neosCSS = Neos.Fusion:Tag {
