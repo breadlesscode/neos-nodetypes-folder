@@ -1,4 +1,7 @@
 Neos:
+  Fusion:
+    defaultContext:
+      'Breadlesscode.NodeTypes.Folder.PackageManager': 'Breadlesscode\NodeTypes\Folder\Eel\Helper\PackageManagerHelper'
   Neos:
     userInterface:
       translation:
